@@ -11,10 +11,30 @@ import org.bukkit.util.Vector;
 import java.util.Random;
 
 public enum ChunkBehaviour {
+    CLEAN_CHUNK {
+        // This is a normal chunk with no effects (it should also reset any other effects)
+        @Override
+        public void apply(Chunk chunk) {
+            for (Entity entity : chunk.getEntities()) {
+                if (entity instanceof LivingEntity) {
+                    // Reset gravity
+                    ((LivingEntity) entity).setGravity(true);
+                }
+            }
+        }
+
+        @Override
+        public void apply(Player player) {
+            // Reset gravity
+            player.setGravity(true);
+        }
+
+    },
+
     ALTERED_GRAVITY {
         @Override
         public void apply(Chunk chunk) {
-            Vector negativeGravity = new Vector(0, -0.1, 0);
+            Vector negativeGravity = new Vector(0, 1, 0);
 
             for (Entity entity : chunk.getEntities()) {
                 if (entity instanceof LivingEntity) {
@@ -30,14 +50,11 @@ public enum ChunkBehaviour {
 
         @Override
         public void apply(Player player) {
-            Vector negativeGravity = new Vector(0, -0.1, 0);
+            Vector negativeGravity = new Vector(0, 1, 0);
 
             // Disable gravity and apply negative gravity
             player.setGravity(false);
             player.setVelocity(player.getVelocity().add(negativeGravity));
-
-            // Rotate the player model
-            player.setRotation(player.getLocation().getYaw() + 180, player.getLocation().getPitch());
         }
     },
     RANDOM_TELEPORT {
@@ -79,6 +96,12 @@ public enum ChunkBehaviour {
     public abstract void apply(Player player);
 
     public static ChunkBehaviour getRandomBehaviour(Random random) {
-        return values()[random.nextInt(values().length)];
+        // there should be a 80% chance of getting a clean chunk
+        // and a 20% chance of getting a random behaviour
+        if (random.nextInt(100) < 80) {
+            return CLEAN_CHUNK;
+        } else {
+            return values()[random.nextInt(values().length)];
+        }
     }
 }
