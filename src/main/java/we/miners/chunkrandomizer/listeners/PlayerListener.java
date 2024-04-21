@@ -1,7 +1,7 @@
 package we.miners.chunkrandomizer.listeners;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -18,12 +18,14 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         // Get the player location
-        Chunk chunk = event.getPlayer().getLocation().getChunk();
+        Player player = event.getPlayer();
+        Chunk fromChunk = event.getFrom().getChunk();
+        Chunk toChunk = event.getTo().getChunk();
 
-        // Check if the chunk has a behaviour
-        if (chunkMap.containsKey(chunk)) {
-            // Apply the behaviour
-            chunkMap.get(chunk).apply(event.getPlayer());
+        if (fromChunk.equals(toChunk)) {
+            chunkMap.get(fromChunk).applyOnStand(player);
+        } else {
+            chunkMap.get(toChunk).applyOnEnter(toChunk, player);
         }
     }
 

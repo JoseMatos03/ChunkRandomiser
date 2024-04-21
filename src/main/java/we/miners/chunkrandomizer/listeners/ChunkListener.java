@@ -1,7 +1,6 @@
 package we.miners.chunkrandomizer.listeners;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -23,10 +22,13 @@ public class ChunkListener implements Listener {
         // Check if the chunk has a behaviour
         if (chunkMap.containsKey(chunk)) {
             // Apply the behaviour
-            chunkMap.get(chunk).apply(chunk);
+            chunkMap.get(chunk).applyOnLoad(chunk);
         } else {
             // Add a new behaviour
             chunkMap.put(chunk, ChunkBehaviour.getRandomBehaviour(random));
+
+            // Apply the behaviour
+            chunkMap.get(chunk).applyOnLoad(chunk);
         }
     }
 

@@ -43,4 +43,7 @@ public final class ChunkRandomizer extends JavaPlugin {
         return getPlugin(ChunkRandomizer.class);
     }
 
+    public Map<Chunk, ChunkBehaviour> getChunkMap() {
+        return chunkMap;
+    }
 }

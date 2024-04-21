@@ -27,15 +27,15 @@ commands:
             usage: /<command> reload
             permission: chunkrandomizer.command.reload
             permission-message: You don't have permission to use this command.
-        set:
-            description: Sets the behaviour of a chunk.
-            usage: /<command> set <chunk> <behaviour>
-            permission: chunkrandomizer.command.set
-            permission-message: You don't have permission to use this command.
         get:
             description: Gets the behaviour of a chunk.
-            usage: /<command> get <chunk>
+            usage: /<command> get
             permission: chunkrandomizer.command.get
+            permission-message: You don't have permission to use this command.
+        set:
+            description: Sets the behaviour of a chunk.
+            usage: /<command> set <behaviour>
+            permission: chunkrandomizer.command.set
             permission-message: You don't have permission to use this command.
         list:
             description: Lists all chunks with their behaviour.
