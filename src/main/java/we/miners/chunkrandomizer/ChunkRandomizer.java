@@ -1,8 +1,6 @@
 package we.miners.chunkrandomizer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import we.miners.chunkrandomizer.commands.ChunkRandomizerCommand;
 import we.miners.chunkrandomizer.listeners.ChunkListener;
@@ -16,8 +14,12 @@ import java.util.Random;
 
 public final class ChunkRandomizer extends JavaPlugin {
 
-    private Map<Chunk, ChunkBehaviour> chunkMap = new HashMap<>();
-    private Random random = new Random();
+    private final Map<Chunk, ChunkBehaviour> chunkMap = new HashMap<>();
+    private final Random random = new Random();
+
+    public static ChunkRandomizer getInstance() {
+        return getPlugin(ChunkRandomizer.class);
+    }
 
     @Override
     public void onEnable() {
@@ -37,10 +39,6 @@ public final class ChunkRandomizer extends JavaPlugin {
         chunkMap.clear();
 
         getServer().getPluginManager().disablePlugin(this);
-    }
-
-    public static ChunkRandomizer getInstance() {
-        return getPlugin(ChunkRandomizer.class);
     }
 
     public Map<Chunk, ChunkBehaviour> getChunkMap() {

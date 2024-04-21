@@ -1,8 +1,8 @@
 package we.miners.chunkrandomizer.listeners;
 
 import org.bukkit.Chunk;
-import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
 
@@ -11,8 +11,13 @@ import java.util.Random;
 
 public class ChunkListener implements Listener {
 
-    private Map<Chunk, ChunkBehaviour> chunkMap;
-    private Random random;
+    private final Map<Chunk, ChunkBehaviour> chunkMap;
+    private final Random random;
+
+    public ChunkListener(Map<Chunk, ChunkBehaviour> chunkMap, Random random) {
+        this.chunkMap = chunkMap;
+        this.random = random;
+    }
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
@@ -30,10 +35,5 @@ public class ChunkListener implements Listener {
             // Apply the behaviour
             chunkMap.get(chunk).applyOnLoad(chunk);
         }
-    }
-
-    public ChunkListener(Map<Chunk, ChunkBehaviour> chunkMap, Random random) {
-        this.chunkMap = chunkMap;
-        this.random = random;
     }
 }
