@@ -33,7 +33,6 @@ public enum ChunkBehaviour {
         public void applyOnStand(Player player) {
         }
     },
-
     ALTERED_GRAVITY {
         @Override
         public void applyOnLoad(Chunk chunk) {
@@ -90,6 +89,7 @@ public enum ChunkBehaviour {
         public void applyOnStand(Player player) {
         }
     },
+    // TODO: fazer
     RANDOM_BLOCK_DROPS {
         @Override
         public void applyOnLoad(Chunk chunk) {
@@ -151,7 +151,7 @@ public enum ChunkBehaviour {
         }
 
     },
-    JUMP_SCARE {
+    LIGHTNING_TRAP {
         @Override
         public void applyOnLoad(Chunk chunk) {
         }
@@ -179,7 +179,7 @@ public enum ChunkBehaviour {
             player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.JUMP, 100, 30));
         }
     },
-    CREEPER_NOISE_JUMP_SCARE {
+    CREEPER_NOISE {
         @Override
         public void applyOnLoad(Chunk chunk) {
         }
@@ -207,6 +207,7 @@ public enum ChunkBehaviour {
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1, 1);
         }
     },
+    // TODO: 50/50 adicionar slime
     HOLE_TRAP {
         @Override
         public void applyOnLoad(Chunk chunk) {
@@ -230,6 +231,7 @@ public enum ChunkBehaviour {
         public void applyOnStand(Player player) {
         }
     },
+    // TODO ADICIONAR MAIS COISAS
     BLIND_PLAYER {
         @Override
         public void applyOnLoad(Chunk chunk) {
@@ -244,6 +246,7 @@ public enum ChunkBehaviour {
             player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.BLINDNESS, 100, 100));
         }
     },
+    // TODO: Fix n dao dano
     FALLING_ANVILS {
         @Override
         public void applyOnLoad(Chunk chunk) {
@@ -322,23 +325,7 @@ public enum ChunkBehaviour {
         public void applyOnStand(Player player) {
         }
     },
-    SPAWN_ENDER_DRAGON {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-            Location location = player.getLocation();
-            EnderDragon enderDragon = (EnderDragon) chunk.getWorld().spawnEntity(location, EntityType.ENDER_DRAGON);
-            enderDragon.setPhase(EnderDragon.Phase.CHARGE_PLAYER);
-            enderDragon.setAI(true);
-        }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
-    },
+    // TODO: SO NO NETHER
     SPAWN_WITHERS {
         @Override
         public void applyOnLoad(Chunk chunk) {
@@ -357,6 +344,9 @@ public enum ChunkBehaviour {
         public void applyOnStand(Player player) {
         }
     };
+    // TODO: TNT sem dano
+    // TODO: M1 click spawn piglins
+    // TODO: Random blocks
 
     public static ChunkBehaviour getRandomBehaviour(Random random) {
         if (random.nextInt(100) < 80) {
