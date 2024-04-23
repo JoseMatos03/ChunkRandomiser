@@ -15,7 +15,6 @@ public enum ChunkBehaviour {
         public void applyOnLoad(Chunk chunk) {
             for (Entity entity : chunk.getEntities()) {
                 if (entity instanceof LivingEntity) {
-                    // Reset all effects
                     entity.setGravity(true);
                 }
             }
@@ -25,8 +24,6 @@ public enum ChunkBehaviour {
         public void applyOnEnter(Chunk chunk, Player player) {
             player.setGravity(true);
             player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
-            // stop repeating task
-            Bukkit.getScheduler().cancelTasks(Bukkit.getPluginManager().getPlugin("ChunkRandomizer"));
         }
 
         @Override
@@ -40,11 +37,9 @@ public enum ChunkBehaviour {
 
             for (Entity entity : chunk.getEntities()) {
                 if (entity instanceof LivingEntity) {
-                    // Disable gravity and apply negative gravity
                     entity.setGravity(false);
                     entity.setVelocity(entity.getVelocity().add(negativeGravity));
 
-                    // Rotate the entity model
                     entity.setRotation(entity.getLocation().getYaw() + 180, entity.getLocation().getPitch());
                 }
             }
@@ -84,44 +79,20 @@ public enum ChunkBehaviour {
             location.setZ(location.getZ() + (new Random().nextInt(20)));
             player.teleport(location);
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
     // TODO: fazer
     RANDOM_BLOCK_DROPS {
         @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
-        @Override
-        public void applyOnStand(Player player) {
+        public void applyOnClick(Player player) {
         }
     },
     FORCE_FIELD {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
         @Override
         public void applyOnStand(Player player) {
             player.setVelocity(new Vector(new Random().nextInt(10) - 5, 0, new Random().nextInt(10) - 5));
         }
     },
     TNT_TRAP {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             for (int x = 0; x < 16; x++) {
@@ -131,35 +102,14 @@ public enum ChunkBehaviour {
                 }
             }
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
     TRIGGER_EXPLOSION {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
         @Override
         public void applyOnStand(Player player) {
             player.getWorld().createExplosion(player.getLocation(), 4, true, true);
         }
-
     },
     LIGHTNING_TRAP {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
         @Override
         public void applyOnStand(Player player) {
             player.getWorld().strikeLightning(player.getLocation());
@@ -167,52 +117,23 @@ public enum ChunkBehaviour {
     },
     INCREASED_JUMP_HEIGHT {
         @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
-        @Override
         public void applyOnStand(Player player) {
             player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.JUMP, 100, 30));
         }
     },
     CREEPER_NOISE {
         @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 1);
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
     GHAST_SCREAMS {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
         @Override
         public void applyOnStand(Player player) {
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1, 1);
         }
     },
-    // TODO: 50/50 adicionar slime
     HOLE_TRAP {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             int minHeight = chunk.getWorld().getMinHeight();
@@ -225,52 +146,37 @@ public enum ChunkBehaviour {
                     }
                 }
             }
-        }
 
-        @Override
-        public void applyOnStand(Player player) {
+            // Add 50/50 chance of creating slime at the bottom
+            if (new Random().nextBoolean()) {
+                for (int x = 0; x < 16; x++) {
+                    for (int z = 0; z < 16; z++) {
+                        chunk.getBlock(x, minHeight, z).setType(org.bukkit.Material.SLIME_BLOCK);
+                    }
+                }
+            }
         }
     },
     // TODO ADICIONAR MAIS COISAS
-    BLIND_PLAYER {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-        }
-
+    JUMP_SCARE_PLAYER {
         @Override
         public void applyOnStand(Player player) {
             player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.BLINDNESS, 100, 100));
         }
     },
-    // TODO: Fix n dao dano
     FALLING_ANVILS {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     Location location = new Location(chunk.getWorld(), chunk.getX() * 16 + x, 255, chunk.getZ() * 16 + z);
-                    location.getWorld().spawnFallingBlock(location, org.bukkit.Material.ANVIL.createBlockData());
+                    FallingBlock fallingBlock = chunk.getWorld().spawnFallingBlock(location, org.bukkit.Material.ANVIL.createBlockData());
+                    fallingBlock.setHurtEntities(true);
                 }
             }
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
     SPAWN_LAVA {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             for (int x = 0; x < 16; x++) {
@@ -280,16 +186,8 @@ public enum ChunkBehaviour {
                 }
             }
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
     SPAWN_RANDOM_HOSTILE_MOBS {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             for (int x = 0; x < 16; x++) {
@@ -300,16 +198,8 @@ public enum ChunkBehaviour {
                 }
             }
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
     SPAWN_RANDOM_PASSIVE_MOBS {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             for (int x = 0; x < 16; x++) {
@@ -320,33 +210,27 @@ public enum ChunkBehaviour {
                 }
             }
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     },
-    // TODO: SO NO NETHER
-    SPAWN_WITHERS {
+    MOB_MULTIPLIER {
+
+    },
+    REPLACE_BLOCKS {
         @Override
         public void applyOnLoad(Chunk chunk) {
-        }
+            int minHeight = chunk.getWorld().getMinHeight();
+            int maxHeight = chunk.getWorld().getMaxHeight();
 
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-            for (int i = 0; i < 4; i++) {
-                Location location = player.getLocation();
-                Wither wither = (Wither) chunk.getWorld().spawnEntity(location, EntityType.WITHER);
-                wither.setAI(true);
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = minHeight; y < maxHeight; y++) {
+                        if (chunk.getBlock(x, y, z).getType() != org.bukkit.Material.AIR) {
+                            chunk.getBlock(x, y, z).setType(org.bukkit.Material.values()[new Random().nextInt(org.bukkit.Material.values().length)]);
+                        }
+                    }
+                }
             }
         }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
     };
-    // TODO: TNT sem dano
-    // TODO: M1 click spawn piglins
-    // TODO: Random blocks
 
     public static ChunkBehaviour getRandomBehaviour(Random random) {
         if (random.nextInt(100) < 80) {
@@ -356,9 +240,15 @@ public enum ChunkBehaviour {
         }
     }
 
-    public abstract void applyOnLoad(Chunk chunk);
+    public void applyOnLoad(Chunk chunk){
+    };
 
-    public abstract void applyOnEnter(Chunk chunk, Player player);
+    public void applyOnEnter(Chunk chunk, Player player){
+    };
 
-    public abstract void applyOnStand(Player player);
+    public void applyOnStand(Player player){
+    };
+
+    public void applyOnClick(Player player){
+    };
 }
