@@ -11,6 +11,7 @@ import java.util.Random;
 
 public enum NetherChunkBehaviour implements ChunkBehaviour {
     CLEAN_CHUNK {},
+    // Spawn pigman when player clicks
     SPAWN_WITHER {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
@@ -19,10 +20,10 @@ public enum NetherChunkBehaviour implements ChunkBehaviour {
     };
 
     public static NetherChunkBehaviour getRandomBehaviour(Random random) {
-        if (random.nextInt(100) < 80) {
+        if (random.nextInt(100) < 90) {
             return CLEAN_CHUNK;
         } else {
-            return values()[random.nextInt(values().length)];
+            return values()[random.nextInt(values().length - 1) + 1];
         }
     }
 

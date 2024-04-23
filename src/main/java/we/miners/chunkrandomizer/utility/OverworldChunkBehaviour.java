@@ -37,19 +37,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
         }
     },
     ALTERED_GRAVITY {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-            Vector negativeGravity = new Vector(0, 1, 0);
-
-            for (Entity entity : chunk.getEntities()) {
-                if (entity instanceof LivingEntity) {
-                    entity.setGravity(false);
-                    entity.setVelocity(entity.getVelocity().add(negativeGravity));
-
-                    entity.setRotation(entity.getLocation().getYaw() + 180, entity.getLocation().getPitch());
-                }
-            }
-        }
+        // TODO: Add mobs
 
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
@@ -58,7 +46,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
 
         @Override
         public void applyOnStand(Player player) {
-            Vector negativeGravity = new Vector(0, 0.5, 0);
+            Vector negativeGravity = new Vector(0, 0.1, 0);
             player.setVelocity(player.getVelocity().add(negativeGravity));
         }
     },
@@ -164,7 +152,6 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
             }
         }
     },
-    // TODO: fazer on exit??
     JUMP_SCARE_PLAYER {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
@@ -276,7 +263,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
         if (random.nextInt(100) < 80) {
             return CLEAN_CHUNK;
         } else {
-            return values()[random.nextInt(values().length)];
+            return values()[random.nextInt(values().length - 1) + 1];
         }
     }
 

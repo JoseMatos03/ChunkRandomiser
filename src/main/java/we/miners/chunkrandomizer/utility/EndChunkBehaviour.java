@@ -9,13 +9,15 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.Random;
 
 public enum EndChunkBehaviour implements ChunkBehaviour {
-    CLEAN_CHUNK {};
+    CLEAN_CHUNK {},
+    PLACE_HOLDER {};
+    // TODO: reclicar multiplier
 
     public static EndChunkBehaviour getRandomBehaviour(Random random) {
         if (random.nextInt(100) < 80) {
             return CLEAN_CHUNK;
         } else {
-            return values()[random.nextInt(values().length)];
+            return values()[random.nextInt(values().length - 1) + 1];
         }
     }
 
