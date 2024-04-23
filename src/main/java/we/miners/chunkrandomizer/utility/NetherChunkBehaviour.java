@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Random;
 
-public enum NetherChunkBehaviour {
+public enum NetherChunkBehaviour implements ChunkBehaviour {
     CLEAN_CHUNK {},
     SPAWN_WITHER {
         @Override

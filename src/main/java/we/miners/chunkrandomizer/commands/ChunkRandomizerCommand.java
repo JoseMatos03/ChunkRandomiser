@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import we.miners.chunkrandomizer.ChunkRandomizer;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
+import we.miners.chunkrandomizer.utility.EndChunkBehaviour;
+import we.miners.chunkrandomizer.utility.NetherChunkBehaviour;
+import we.miners.chunkrandomizer.utility.OverworldChunkBehaviour;
 
 public class ChunkRandomizerCommand implements CommandExecutor {
     @Override
@@ -40,7 +43,7 @@ public class ChunkRandomizerCommand implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 Chunk chunk = player.getLocation().getChunk();
-                ChunkBehaviour behaviour = ChunkRandomizer.getInstance().getChunkMap().get(chunk);
+                ChunkBehaviour behaviour = ChunkRandomizer.getInstance().getOverworldChunkMap().get(chunk);
                 sender.sendMessage("Chunk behaviour: " + behaviour);
                 return true;
             }
@@ -50,15 +53,28 @@ public class ChunkRandomizerCommand implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 Chunk chunk = player.getLocation().getChunk();
-                ChunkBehaviour behaviour = ChunkBehaviour.valueOf(args[1].toUpperCase());
-                ChunkRandomizer.getInstance().getChunkMap().put(chunk, behaviour);
+
+                if (chunk.getWorld().getName().equals("world")){
+                    ChunkBehaviour behaviour = OverworldChunkBehaviour.valueOf(args[1].toUpperCase());
+                    ChunkRandomizer.getInstance().getOverworldChunkMap().put(chunk, behaviour);
+                } else if (chunk.getWorld().getName().equals("world_nether")) {
+                    ChunkBehaviour behaviour = NetherChunkBehaviour.valueOf(args[1].toUpperCase());
+                    ChunkRandomizer.getInstance().getNetherChunkMap().put(chunk, behaviour);
+                } else if (chunk.getWorld().getName().equals("world_the_end")) {
+                    ChunkBehaviour behaviour = EndChunkBehaviour.valueOf(args[1].toUpperCase());
+                    ChunkRandomizer.getInstance().getEndChunkMap().put(chunk, behaviour);
+                } else {
+                    sender.sendMessage("Invalid world!");
+                    return true;
+                }
+
                 sender.sendMessage("Chunk behaviour set!");
                 return true;
             }
         }
 
         if (args[0].equalsIgnoreCase("list")) {
-            ChunkRandomizer.getInstance().getChunkMap().forEach((chunk, behaviour) -> {
+            ChunkRandomizer.getInstance().getOverworldChunkMap().forEach((chunk, behaviour) -> {
                 sender.sendMessage("Chunk: " + chunk + ", Behaviour: " + behaviour);
             });
             return true;

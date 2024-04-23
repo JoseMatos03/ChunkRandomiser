@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Random;
 
-public enum EndChunkBehaviour {
+public enum EndChunkBehaviour implements ChunkBehaviour {
     CLEAN_CHUNK {};
 
     public static EndChunkBehaviour getRandomBehaviour(Random random) {

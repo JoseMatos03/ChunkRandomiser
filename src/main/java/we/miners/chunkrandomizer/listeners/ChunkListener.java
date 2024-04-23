@@ -4,9 +4,11 @@ import org.bukkit.Chunk;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
+import we.miners.chunkrandomizer.ChunkRandomizer;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
 import we.miners.chunkrandomizer.utility.EndChunkBehaviour;
 import we.miners.chunkrandomizer.utility.NetherChunkBehaviour;
+import we.miners.chunkrandomizer.utility.OverworldChunkBehaviour;
 
 import java.util.Map;
 import java.util.Random;
@@ -15,16 +17,16 @@ import java.util.Random;
 public class ChunkListener implements Listener {
 
     private final Map<Chunk, ChunkBehaviour> chunkMap;
-    private final Map<Chunk, NetherChunkBehaviour> netherChunkMap;
-    private final Map<Chunk, EndChunkBehaviour> endChunkMap;
+    private final Map<Chunk, ChunkBehaviour> netherChunkMap;
+    private final Map<Chunk, ChunkBehaviour> endChunkMap;
 
     private final Random random;
 
-    public ChunkListener(Map<Chunk, ChunkBehaviour> chunkMap, Map<Chunk, NetherChunkBehaviour> netherChunkMap, Map<Chunk, EndChunkBehaviour> endChunkMap, Random random) {
-        this.chunkMap = chunkMap;
-        this.netherChunkMap = netherChunkMap;
-        this.endChunkMap = endChunkMap;
-        this.random = random;
+    public ChunkListener() {
+        this.chunkMap = ChunkRandomizer.getInstance().getOverworldChunkMap();
+        this.netherChunkMap = ChunkRandomizer.getInstance().getNetherChunkMap();
+        this.endChunkMap = ChunkRandomizer.getInstance().getEndChunkMap();
+        this.random = ChunkRandomizer.getInstance().getRandom();
     }
 
     @EventHandler
@@ -38,7 +40,7 @@ public class ChunkListener implements Listener {
                 chunkMap.get(chunk).applyOnLoad(chunk);
             } else {
                 // Add a new behaviour
-                chunkMap.put(chunk, ChunkBehaviour.getRandomBehaviour(random));
+                chunkMap.put(chunk, OverworldChunkBehaviour.getRandomBehaviour(random));
 
                 // Apply the behaviour
                 chunkMap.get(chunk).applyOnLoad(chunk);

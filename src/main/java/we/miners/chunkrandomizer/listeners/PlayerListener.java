@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import we.miners.chunkrandomizer.ChunkRandomizer;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
 
 import java.util.Map;
@@ -13,11 +14,16 @@ import java.util.Random;
 public class PlayerListener implements Listener {
 
     private final Map<Chunk, ChunkBehaviour> chunkMap;
+    private final Map<Chunk, ChunkBehaviour> netherChunkMap;
+    private final Map<Chunk, ChunkBehaviour> endChunkMap;
+
     private final Random random;
 
-    public PlayerListener(Map<Chunk, ChunkBehaviour> chunkMap, Random random) {
-        this.chunkMap = chunkMap;
-        this.random = random;
+    public PlayerListener() {
+        this.chunkMap = ChunkRandomizer.getInstance().getOverworldChunkMap();
+        this.netherChunkMap = ChunkRandomizer.getInstance().getNetherChunkMap();
+        this.endChunkMap = ChunkRandomizer.getInstance().getEndChunkMap();
+        this.random = ChunkRandomizer.getInstance().getRandom();
     }
 
     @EventHandler
