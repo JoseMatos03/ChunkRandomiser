@@ -14,7 +14,6 @@ import we.miners.chunkrandomizer.utility.OverworldChunkBehaviour;
 public class ChunkRandomizerCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // TODO: Implement command logic
         if (args.length == 0) {
             sender.sendMessage("Usage: /chunkrandomizer start");
             return true;
@@ -43,10 +42,22 @@ public class ChunkRandomizerCommand implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 Chunk chunk = player.getLocation().getChunk();
-                ChunkBehaviour behaviour = ChunkRandomizer.getInstance().getOverworldChunkMap().get(chunk);
-                sender.sendMessage("Chunk behaviour: " + behaviour);
+                if (chunk.getWorld().getName().equals("world")) {
+                    ChunkBehaviour behaviour = ChunkRandomizer.getInstance().getOverworldChunkMap().get(chunk);
+                    sender.sendMessage("Chunk behaviour: " + behaviour);
+                } else if (chunk.getWorld().getName().equals("world_nether")) {
+                    ChunkBehaviour behaviour = ChunkRandomizer.getInstance().getNetherChunkMap().get(chunk);
+                    sender.sendMessage("Chunk behaviour: " + behaviour);
+                } else if (chunk.getWorld().getName().equals("world_the_end")) {
+                    ChunkBehaviour behaviour = ChunkRandomizer.getInstance().getEndChunkMap().get(chunk);
+                    sender.sendMessage("Chunk behaviour: " + behaviour);
+                } else {
+                    sender.sendMessage("Invalid world!");
+                    return true;
+                }
                 return true;
             }
+            return false;
         }
 
         if (args[0].equalsIgnoreCase("set")) {
@@ -71,13 +82,6 @@ public class ChunkRandomizerCommand implements CommandExecutor {
                 sender.sendMessage("Chunk behaviour set!");
                 return true;
             }
-        }
-
-        if (args[0].equalsIgnoreCase("list")) {
-            ChunkRandomizer.getInstance().getOverworldChunkMap().forEach((chunk, behaviour) -> {
-                sender.sendMessage("Chunk: " + chunk + ", Behaviour: " + behaviour);
-            });
-            return true;
         }
 
         return false;

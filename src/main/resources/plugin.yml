@@ -37,8 +37,3 @@ commands:
             usage: /<command> set <behaviour>
             permission: chunkrandomizer.command.set
             permission-message: You don't have permission to use this command.
-        list:
-            description: Lists all chunks with their behaviour.
-            usage: /<command> list
-            permission: chunkrandomizer.command.list
-            permission-message: You don't have permission to use this command.

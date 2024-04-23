@@ -33,10 +33,21 @@ public class PlayerListener implements Listener {
         Chunk fromChunk = event.getFrom().getChunk();
         Chunk toChunk = event.getTo().getChunk();
 
+        if (fromChunk.getWorld().getName().equals("world")) {
+            handlePlayerMove(fromChunk, toChunk, chunkMap, player);
+        } else if (fromChunk.getWorld().getName().equals("world_nether")) {
+            handlePlayerMove(fromChunk, toChunk, netherChunkMap, player);
+        } else if (fromChunk.getWorld().getName().equals("world_the_end")) {
+            handlePlayerMove(fromChunk, toChunk, endChunkMap, player);
+        }
+    }
+
+    private void handlePlayerMove(Chunk fromChunk, Chunk toChunk, Map<Chunk, ChunkBehaviour> chunkMap, Player player) {
         if (fromChunk.equals(toChunk)) {
             chunkMap.get(fromChunk).applyOnStand(player);
         } else {
             chunkMap.get(toChunk).applyOnEnter(toChunk, player);
         }
     }
+
 }

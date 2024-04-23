@@ -17,4 +17,6 @@ public interface ChunkBehaviour {
     public void applyOnStand(Player player);
 
     public void applyOnClick(Player player);
+
+    public static ChunkBehaviour getRandomBehaviour(Random random){ return null; };
 }
