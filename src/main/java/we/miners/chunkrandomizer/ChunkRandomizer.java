@@ -3,7 +3,9 @@ package we.miners.chunkrandomizer;
 import org.bukkit.Chunk;
 import org.bukkit.plugin.java.JavaPlugin;
 import we.miners.chunkrandomizer.commands.ChunkRandomizerCommand;
+import we.miners.chunkrandomizer.listeners.BlockBreakListener;
 import we.miners.chunkrandomizer.listeners.ChunkListener;
+import we.miners.chunkrandomizer.listeners.EntityDamageListener;
 import we.miners.chunkrandomizer.listeners.PlayerListener;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
 import we.miners.chunkrandomizer.utility.EndChunkBehaviour;
@@ -45,6 +47,8 @@ public final class ChunkRandomizer extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new ChunkListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
     }
 
     public void disablePlugin() {

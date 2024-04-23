@@ -1,7 +1,10 @@
 package we.miners.chunkrandomizer.utility;
 
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.Random;
 
@@ -26,5 +29,11 @@ public enum EndChunkBehaviour implements ChunkBehaviour {
     };
 
     public void applyOnClick(Player player){
+    };
+
+    public void applyOnHit(Player player, Entity entity){
+    };
+
+    public void applyOnBreak(BlockBreakEvent event, Block block, Player player) {
     };
 }

@@ -3,8 +3,12 @@ package we.miners.chunkrandomizer.utility;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import we.miners.chunkrandomizer.ChunkRandomizer;
 
 import java.util.Random;
 
@@ -23,6 +27,9 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
         public void applyOnEnter(Chunk chunk, Player player) {
             player.setGravity(true);
             player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+
+            // disable schedulers
+            ChunkRandomizer.getInstance().getServer().getScheduler().cancelTasks(ChunkRandomizer.getInstance());
         }
 
         @Override
@@ -79,10 +86,11 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
             player.teleport(location);
         }
     },
-    // TODO: fazer
     RANDOM_BLOCK_DROPS {
         @Override
-        public void applyOnClick(Player player) {
+        public void applyOnBreak(BlockBreakEvent event, Block block, Player player) {
+            event.setDropItems(false);
+            block.getWorld().dropItemNaturally(block.getLocation(), new org.bukkit.inventory.ItemStack(org.bukkit.Material.values()[new Random().nextInt(org.bukkit.Material.values().length)]));
         }
     },
     FORCE_FIELD {
@@ -156,11 +164,54 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
             }
         }
     },
-    // TODO ADICIONAR MAIS COISAS
+    // TODO: fazer on exit??
     JUMP_SCARE_PLAYER {
         @Override
+        public void applyOnEnter(Chunk chunk, Player player) {
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1, 1);
+
+            new org.bukkit.scheduler.BukkitRunnable() {
+                final Sound[] sounds = new Sound[]{
+                        Sound.ENTITY_ENDERMAN_STARE,
+                        Sound.ENTITY_ENDERMAN_SCREAM,
+                        Sound.ENTITY_ENDERMAN_TELEPORT,
+                        Sound.ENTITY_GHAST_HURT,
+                        Sound.ENTITY_GHAST_SHOOT,
+                        Sound.ENTITY_CREEPER_PRIMED,
+                        Sound.ENTITY_SPIDER_AMBIENT,
+                        Sound.ENTITY_SPIDER_STEP,
+                        Sound.ENTITY_WITHER_AMBIENT,
+                        Sound.ENTITY_ZOMBIE_HURT,
+                        Sound.ENTITY_ZOMBIE_INFECT,
+                        Sound.ENTITY_ZOMBIE_STEP,
+                        Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT,
+                        Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED,
+                        Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR,
+                        Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,
+                        Sound.ENTITY_BLAZE_SHOOT,
+                        Sound.ENTITY_BLAZE_AMBIENT,
+                        Sound.ENTITY_DROWNED_AMBIENT_WATER,
+                        Sound.ENTITY_GUARDIAN_AMBIENT,
+                        Sound.ENTITY_GUARDIAN_ATTACK,
+                        Sound.ENTITY_WARDEN_ANGRY,
+                        Sound.ENTITY_WARDEN_AGITATED,
+                        Sound.ENTITY_WARDEN_EMERGE,
+                        Sound.AMBIENT_CAVE,
+                };
+
+                @Override
+                public void run() {
+                    player.getWorld().playSound(player.getLocation(), sounds[new Random().nextInt(sounds.length)], 1, 1);
+                }
+            }.runTaskTimer(ChunkRandomizer.getInstance(), 0L, 40L); // 40 ticks = 2 seconds
+        }
+
+        @Override
         public void applyOnStand(Player player) {
-            player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.BLINDNESS, 100, 100));
+            player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.BLINDNESS, 100, 3));
+            player.addPotionEffect(new org.bukkit.potion.PotionEffect(PotionEffectType.DARKNESS, 100, 1));
+            player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.CONFUSION, 100, 1));
+            player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.SLOW, 100, 3));
         }
     },
     FALLING_ANVILS {
@@ -171,6 +222,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
                     Location location = new Location(chunk.getWorld(), chunk.getX() * 16 + x, 255, chunk.getZ() * 16 + z);
                     FallingBlock fallingBlock = chunk.getWorld().spawnFallingBlock(location, org.bukkit.Material.ANVIL.createBlockData());
                     fallingBlock.setHurtEntities(true);
+                    fallingBlock.setDamagePerBlock(10);
                 }
             }
         }
@@ -211,22 +263,11 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
         }
     },
     MOB_MULTIPLIER {
-
-    },
-    REPLACE_BLOCKS {
         @Override
-        public void applyOnLoad(Chunk chunk) {
-            int minHeight = chunk.getWorld().getMinHeight();
-            int maxHeight = chunk.getWorld().getMaxHeight();
-
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = minHeight; y < maxHeight; y++) {
-                        if (chunk.getBlock(x, y, z).getType() != org.bukkit.Material.AIR) {
-                            chunk.getBlock(x, y, z).setType(org.bukkit.Material.values()[new Random().nextInt(org.bukkit.Material.values().length)]);
-                        }
-                    }
-                }
+        public void applyOnHit(Player player, Entity entity) {
+            if (entity instanceof LivingEntity) {
+                Location location = entity.getLocation();
+                entity.getWorld().spawnEntity(location, entity.getType());
             }
         }
     };
@@ -249,5 +290,11 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
     }
 
     public void applyOnClick(Player player) {
+    }
+
+    public void applyOnHit(Player player, Entity entity) {
+    }
+
+    public void applyOnBreak(BlockBreakEvent event, Block block, Player player) {
     }
 }
