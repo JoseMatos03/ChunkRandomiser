@@ -120,6 +120,29 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
                 }
             }
         }
+
+        @Override
+        public void applyOnStand(Player player) {
+            Location location = player.getLocation();
+            location.setY(location.getY() - 1);
+            Block block = location.getBlock();
+            if (block.getType().equals(org.bukkit.Material.SLIME_BLOCK)) {
+                // execute this 3 times every 10 ticks, then stop
+                new org.bukkit.scheduler.BukkitRunnable() {
+                    int count = 0;
+
+                    @Override
+                    public void run() {
+                        if (count < 8) {
+                            player.setVelocity(new Vector(0, 10, 0));
+                            count++;
+                        } else {
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(ChunkRandomizer.getInstance(), 0L, 5L);
+            }
+        }
     },
     JUMP_SCARE_PLAYER {
         @Override
