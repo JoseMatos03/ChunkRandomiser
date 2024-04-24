@@ -1,9 +1,12 @@
 package we.miners.chunkrandomizer.listeners;
 
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import we.miners.chunkrandomizer.ChunkRandomizer;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
@@ -40,6 +43,27 @@ public class PlayerListener implements Listener {
         } else if (fromChunk.getWorld().getName().equals("world_the_end")) {
             handlePlayerMove(fromChunk, toChunk, endChunkMap, player);
         }
+    }
+
+    @EventHandler
+    private void onPlayerInteraction(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        Chunk chunk = event.getPlayer().getLocation().getChunk();
+        Block block = event.getClickedBlock();
+
+        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+            if (chunk.getWorld().getName().equals("world")) {
+                handlePlayerInteraction(chunk, chunkMap, player, block);
+            } else if (chunk.getWorld().getName().equals("world_nether")) {
+                handlePlayerInteraction(chunk, netherChunkMap, player, block);
+            } else if (chunk.getWorld().getName().equals("world_the_end")) {
+                handlePlayerInteraction(chunk, endChunkMap, player, block);
+            }
+        }
+    }
+
+    private void handlePlayerInteraction(Chunk chunk, Map<Chunk, ChunkBehaviour> chunkMap, Player player, Block block) {
+        chunkMap.get(chunk).applyOnClick(player, block);
     }
 
     private void handlePlayerMove(Chunk fromChunk, Chunk toChunk, Map<Chunk, ChunkBehaviour> chunkMap, Player player) {

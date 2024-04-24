@@ -10,68 +10,62 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import we.miners.chunkrandomizer.ChunkRandomizer;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public enum OverworldChunkBehaviour implements ChunkBehaviour {
     CLEAN_CHUNK {
         @Override
-        public void applyOnLoad(Chunk chunk) {
-            for (Entity entity : chunk.getEntities()) {
+        public void applyOnEnter(Chunk chunk, Player player) {
+            // Player
+            player.setGravity(true);
+            player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+            ChunkRandomizer.getInstance().getServer().getScheduler().cancelTasks(ChunkRandomizer.getInstance());
+
+            // Mobs
+            Arrays.stream(chunk.getEntities()).forEach(entity -> {
                 if (entity instanceof LivingEntity) {
                     entity.setGravity(true);
                 }
-            }
-        }
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-            player.setGravity(true);
-            player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
-
-            // disable schedulers
-            ChunkRandomizer.getInstance().getServer().getScheduler().cancelTasks(ChunkRandomizer.getInstance());
-        }
-
-        @Override
-        public void applyOnStand(Player player) {
-        }
-    },
-    ALTERED_GRAVITY {
-        // TODO: Add mobs
-
-        @Override
-        public void applyOnEnter(Chunk chunk, Player player) {
-            player.setGravity(false);
-        }
-
-        @Override
-        public void applyOnStand(Player player) {
-            Vector negativeGravity = new Vector(0, 0.1, 0);
-            player.setVelocity(player.getVelocity().add(negativeGravity));
+            });
         }
     },
     RANDOM_TELEPORT {
-        @Override
-        public void applyOnLoad(Chunk chunk) {
-            Random random = new Random();
-
-            for (Entity entity : chunk.getEntities()) {
-                if (entity instanceof LivingEntity) {
-                    Location location = entity.getLocation();
-                    location.setX(location.getX() + (random.nextInt(20)));
-                    location.setY(location.getY() + (random.nextInt(20)) - 10);
-                    location.setZ(location.getZ() + (random.nextInt(20)));
-                    entity.teleport(location);
-                }
-            }
-        }
-
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
             Location location = player.getLocation();
             location.setX(location.getX() + (new Random().nextInt(20)));
             location.setZ(location.getZ() + (new Random().nextInt(20)));
+            location.setY(location.getY() + (new Random().nextInt(10) - 5));
             player.teleport(location);
+        }
+    },
+    ALTERED_GRAVITY {
+        @Override
+        public void applyOnEnter(Chunk chunk, Player player) {
+            // Player
+            player.setGravity(false);
+
+            // Mobs
+            Arrays.stream(chunk.getEntities()).forEach(entity -> {
+                if (entity instanceof LivingEntity) {
+                    entity.setGravity(false);
+                }
+            });
+        }
+
+        @Override
+        public void applyOnStand(Player player) {
+            // Player
+            Vector negativeGravity = new Vector(0, 0.15, 0);
+            player.setVelocity(player.getVelocity().add(negativeGravity));
+
+            // Mobs
+            Arrays.stream(player.getLocation().getChunk().getEntities()).forEach(entity -> {
+                if (entity instanceof LivingEntity) {
+                    entity.setVelocity(entity.getVelocity().add(negativeGravity));
+                }
+            });
         }
     },
     RANDOM_BLOCK_DROPS {
@@ -100,7 +94,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
     },
     TRIGGER_EXPLOSION {
         @Override
-        public void applyOnStand(Player player) {
+        public void applyOnEnter(Chunk chunk, Player player) {
             player.getWorld().createExplosion(player.getLocation(), 4, true, true);
         }
     },
@@ -155,7 +149,8 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
     JUMP_SCARE_PLAYER {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1, 1);
+            Location location = player.getLocation().add(player.getLocation().getDirection().normalize().multiply(5));
+            player.getWorld().spawnEntity(location, EntityType.WARDEN);
 
             new org.bukkit.scheduler.BukkitRunnable() {
                 final Sound[] sounds = new Sound[]{
@@ -257,6 +252,13 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
                 entity.getWorld().spawnEntity(location, entity.getType());
             }
         }
+    },
+    LAUNCH_UP {
+        @Override
+        public void applyOnEnter(Chunk chunk, Player player) {
+            player.getWorld().createExplosion(player.getLocation(), 0, true, true);
+            player.setVelocity(player.getVelocity().add(new org.bukkit.util.Vector(0, 10, 0)));
+        }
     };
 
     public static OverworldChunkBehaviour getRandomBehaviour(Random random) {
@@ -276,7 +278,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
     public void applyOnStand(Player player) {
     }
 
-    public void applyOnClick(Player player) {
+    public void applyOnClick(Player player, Block block) {
     }
 
     public void applyOnHit(Player player, Entity entity) {
