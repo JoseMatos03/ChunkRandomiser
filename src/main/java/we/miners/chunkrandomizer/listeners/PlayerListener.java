@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import we.miners.chunkrandomizer.ChunkRandomizer;
@@ -59,6 +60,21 @@ public class PlayerListener implements Listener {
             } else if (chunk.getWorld().getName().equals("world_the_end")) {
                 handlePlayerInteraction(chunk, endChunkMap, player, block);
             }
+        }
+    }
+
+    @EventHandler
+    private void onBlockPlace(BlockPlaceEvent event) {
+        Block block = event.getBlock();
+        Chunk chunk = block.getChunk();
+        Player player = event.getPlayer();
+
+        if (chunk.getWorld().getName().equals("world")) {
+            chunkMap.get(chunk).applyOnBlockPlace(player, block);
+        } else if (chunk.getWorld().getName().equals("world_nether")) {
+            netherChunkMap.get(chunk).applyOnBlockPlace(player, block);
+        } else if (chunk.getWorld().getName().equals("world_the_end")) {
+            endChunkMap.get(chunk).applyOnBlockPlace(player, block);
         }
     }
 

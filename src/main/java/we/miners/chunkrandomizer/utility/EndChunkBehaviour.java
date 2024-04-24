@@ -63,21 +63,25 @@ public enum EndChunkBehaviour implements ChunkBehaviour {
         }
     }
 
-    public void applyOnLoad(Chunk chunk){
-    };
+    public void applyOnLoad(Chunk chunk) {
+    }
 
-    public void applyOnEnter(Chunk chunk, Player player){
-    };
+    public void applyOnEnter(Chunk chunk, Player player) {
+    }
 
-    public void applyOnStand(Player player){
-    };
+    public void applyOnStand(Player player) {
+    }
 
-    public void applyOnClick(Player player, Block block){
-    };
+    public void applyOnClick(Player player, Block block) {
+    }
 
-    public void applyOnHit(Player player, Entity entity){
-    };
+    public void applyOnBlockPlace(Player player, Block block) {
+    }
+
+    public void applyOnHit(Player player, Entity entity) {
+    }
 
     public void applyOnBreak(BlockBreakEvent event, Block block, Player player) {
-    };
+    }
+
 }

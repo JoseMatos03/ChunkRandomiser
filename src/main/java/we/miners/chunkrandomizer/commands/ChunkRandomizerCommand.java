@@ -65,7 +65,7 @@ public class ChunkRandomizerCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 Chunk chunk = player.getLocation().getChunk();
 
-                if (chunk.getWorld().getName().equals("world")){
+                if (chunk.getWorld().getName().equals("world")) {
                     ChunkBehaviour behaviour = OverworldChunkBehaviour.valueOf(args[1].toUpperCase());
                     ChunkRandomizer.getInstance().getOverworldChunkMap().put(chunk, behaviour);
                 } else if (chunk.getWorld().getName().equals("world_nether")) {

@@ -6,9 +6,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import we.miners.chunkrandomizer.ChunkRandomizer;
 import we.miners.chunkrandomizer.utility.ChunkBehaviour;
-import we.miners.chunkrandomizer.utility.EndChunkBehaviour;
-import we.miners.chunkrandomizer.utility.NetherChunkBehaviour;
-import we.miners.chunkrandomizer.utility.OverworldChunkBehaviour;
 
 import java.util.Map;
 import java.util.Random;

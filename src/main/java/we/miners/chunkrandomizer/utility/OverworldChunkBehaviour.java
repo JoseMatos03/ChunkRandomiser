@@ -10,24 +10,15 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import we.miners.chunkrandomizer.ChunkRandomizer;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public enum OverworldChunkBehaviour implements ChunkBehaviour {
     CLEAN_CHUNK {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
-            // Player
             player.setGravity(true);
             player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
             ChunkRandomizer.getInstance().getServer().getScheduler().cancelTasks(ChunkRandomizer.getInstance());
-
-            // Mobs
-            Arrays.stream(chunk.getEntities()).forEach(entity -> {
-                if (entity instanceof LivingEntity) {
-                    entity.setGravity(true);
-                }
-            });
         }
     },
     RANDOM_TELEPORT {
@@ -43,29 +34,13 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
     ALTERED_GRAVITY {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
-            // Player
             player.setGravity(false);
-
-            // Mobs
-            Arrays.stream(chunk.getEntities()).forEach(entity -> {
-                if (entity instanceof LivingEntity) {
-                    entity.setGravity(false);
-                }
-            });
         }
 
         @Override
         public void applyOnStand(Player player) {
-            // Player
             Vector negativeGravity = new Vector(0, 0.15, 0);
             player.setVelocity(player.getVelocity().add(negativeGravity));
-
-            // Mobs
-            Arrays.stream(player.getLocation().getChunk().getEntities()).forEach(entity -> {
-                if (entity instanceof LivingEntity) {
-                    entity.setVelocity(entity.getVelocity().add(negativeGravity));
-                }
-            });
         }
     },
     RANDOM_BLOCK_DROPS {
@@ -98,7 +73,7 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
             player.getWorld().createExplosion(player.getLocation(), 4, true, true);
         }
     },
-    LIGHTNING_TRAP {
+    TRIGGER_LIGHTNING {
         @Override
         public void applyOnStand(Player player) {
             player.getWorld().strikeLightning(player.getLocation());
@@ -279,6 +254,9 @@ public enum OverworldChunkBehaviour implements ChunkBehaviour {
     }
 
     public void applyOnClick(Player player, Block block) {
+    }
+
+    public void applyOnBlockPlace(Player player, Block block) {
     }
 
     public void applyOnHit(Player player, Entity entity) {

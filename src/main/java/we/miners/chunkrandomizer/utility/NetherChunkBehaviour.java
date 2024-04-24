@@ -2,32 +2,30 @@ package we.miners.chunkrandomizer.utility;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.util.Vector;
 import we.miners.chunkrandomizer.ChunkRandomizer;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public enum NetherChunkBehaviour implements ChunkBehaviour {
     CLEAN_CHUNK {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
-            // Player
             player.setGravity(true);
             player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
-
-            // Mobs
-            Arrays.stream(chunk.getEntities()).forEach(entity -> {
-                if (entity instanceof LivingEntity) {
-                    entity.setGravity(true);
-                }
-            });
         }
     },
-    // TODO: Add on right click, place bed trap
+    BED_TRAP {
+        @Override
+        public void applyOnBlockPlace(Player player, Block block) {
+            block.setType(Material.RED_BED);
+            ChunkRandomizer.getInstance().getServer().getScheduler().runTaskLater(ChunkRandomizer.getInstance(), () -> block.getWorld().createExplosion(block.getLocation(), 5, true, true), 2);
+        }
+    },
     SPAWN_BLAZES {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
@@ -122,29 +120,30 @@ public enum NetherChunkBehaviour implements ChunkBehaviour {
     ALTERED_GRAVITY {
         @Override
         public void applyOnEnter(Chunk chunk, Player player) {
-            // Player
             player.setGravity(false);
-
-            // Mobs
-            Arrays.stream(chunk.getEntities()).forEach(entity -> {
-                if (entity instanceof LivingEntity) {
-                    entity.setGravity(false);
-                }
-            });
         }
 
         @Override
         public void applyOnStand(Player player) {
-            // Player
             Vector negativeGravity = new Vector(0, 0.15, 0);
             player.setVelocity(player.getVelocity().add(negativeGravity));
-
-            // Mobs
-            Arrays.stream(player.getLocation().getChunk().getEntities()).forEach(entity -> {
-                if (entity instanceof LivingEntity) {
-                    entity.setVelocity(entity.getVelocity().add(negativeGravity));
-                }
-            });
+        }
+    },
+    RANDOM_TELEPORT {
+        @Override
+        public void applyOnEnter(Chunk chunk, Player player) {
+            Location location = player.getLocation();
+            location.setX(location.getX() + (new Random().nextInt(20)));
+            location.setZ(location.getZ() + (new Random().nextInt(20)));
+            location.setY(location.getY() + (new Random().nextInt(10) - 5));
+            player.teleport(location);
+        }
+    },
+    LAUNCH_UP {
+        @Override
+        public void applyOnEnter(Chunk chunk, Player player) {
+            player.getWorld().createExplosion(player.getLocation(), 0, true, true);
+            player.setVelocity(player.getVelocity().add(new org.bukkit.util.Vector(0, 10, 0)));
         }
     };
 
@@ -156,21 +155,25 @@ public enum NetherChunkBehaviour implements ChunkBehaviour {
         }
     }
 
-    public void applyOnLoad(Chunk chunk){
-    };
+    public void applyOnLoad(Chunk chunk) {
+    }
 
-    public void applyOnEnter(Chunk chunk, Player player){
-    };
+    public void applyOnEnter(Chunk chunk, Player player) {
+    }
 
-    public void applyOnStand(Player player){
-    };
+    public void applyOnStand(Player player) {
+    }
 
-    public void applyOnClick(Player player, Block block){
-    };
+    public void applyOnClick(Player player, Block block) {
+    }
 
-    public void applyOnHit(Player player, Entity entity){
-    };
+    public void applyOnBlockPlace(Player player, Block block) {
+    }
+
+    public void applyOnHit(Player player, Entity entity) {
+    }
 
     public void applyOnBreak(BlockBreakEvent event, Block block, Player player) {
-    };
+    }
+
 }

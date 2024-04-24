@@ -57,8 +57,19 @@ public final class ChunkRandomizer extends JavaPlugin {
         getServer().getPluginManager().disablePlugin(this);
     }
 
-    public Map<Chunk, ChunkBehaviour> getOverworldChunkMap() { return overworldChunkMap; }
-    public Map<Chunk, ChunkBehaviour> getNetherChunkMap() { return netherChunkMap; }
-    public Map<Chunk, ChunkBehaviour> getEndChunkMap() { return endChunkMap; }
-    public Random getRandom() { return random; }
+    public Map<Chunk, ChunkBehaviour> getOverworldChunkMap() {
+        return overworldChunkMap;
+    }
+
+    public Map<Chunk, ChunkBehaviour> getNetherChunkMap() {
+        return netherChunkMap;
+    }
+
+    public Map<Chunk, ChunkBehaviour> getEndChunkMap() {
+        return endChunkMap;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
 }

@@ -2,23 +2,29 @@ package we.miners.chunkrandomizer.utility;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.Random;
 
 public interface ChunkBehaviour {
-    public void applyOnLoad(Chunk chunk);
+    static ChunkBehaviour getRandomBehaviour(Random random) {
+        return null;
+    }
 
-    public void applyOnEnter(Chunk chunk, Player player);
+    void applyOnLoad(Chunk chunk);
 
-    public void applyOnStand(Player player);
+    void applyOnEnter(Chunk chunk, Player player);
 
-    public void applyOnClick(Player player, Block block);
+    void applyOnStand(Player player);
 
-    public void applyOnBreak(BlockBreakEvent event, Block block, Player player);
+    void applyOnClick(Player player, Block block);
 
-    public void applyOnHit(Player player, Entity entity);
+    void applyOnBlockPlace(Player player, Block block);
 
-    public static ChunkBehaviour getRandomBehaviour(Random random){ return null; };
+    void applyOnBreak(BlockBreakEvent event, Block block, Player player);
+
+    void applyOnHit(Player player, Entity entity);
+
 }
